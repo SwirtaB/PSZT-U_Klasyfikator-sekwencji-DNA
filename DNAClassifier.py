@@ -53,7 +53,7 @@ def get_inf_gain(divideAttribute, collection):
     return get_entropy('class', collection) - information
 
 def choose_best_attribute(collection, classLabel):
-    maxInfGain = 0
+    maxInfGain = 0.0
     bestAttribute = None
     for attribute in collection.keys():
         if attribute != classLabel:
