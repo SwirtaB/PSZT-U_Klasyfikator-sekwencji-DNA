@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+from pandas.core.frame import DataFrame
+from pandas.core.series import Series
 import sklearn
 import sys
 import pprint
@@ -43,7 +45,6 @@ def get_entropy(divideAttribute, collection):
 
 def get_inf_gain(divideAttribute, collection):
     uniqueAttributes = collection[divideAttribute].unique()
-    # print(uniqueAttributes)
     collectionGrouped = collection.groupby([divideAttribute])
     information = 0
     for attribute in uniqueAttributes:
@@ -88,14 +89,30 @@ def build_ID3(collection : pd.DataFrame, classLabel, ID3Tree = None):
         ID3Tree[bestAttribute][value] = build_ID3(subCollection, classLabel)
 
     return ID3Tree
-        
-data = readSpliceFile("Data/spliceDTrainKIS.txt", 15)
-       
+
+def classify(ID3Tree, row, lastKey=None, checkKey=False):
+    if type(ID3Tree) is not dict:
+        return ID3Tree
+    for key, value in ID3Tree.items():
+        if checkKey is False:
+            checkKey = True
+            lastKey = key
+            return classify(value, row, lastKey, checkKey)
+        if checkKey is True:
+            if(row[lastKey][0] == key):
+                checkKey = False
+                return classify(value, row, lastKey, checkKey)
+
+data = readSpliceFile("Data/spliceDTrainKIS.txt", 15)      
 # data = pd.DataFrame({'x1' : ['A', 'B', 'B', 'B', 'B'], 'x2' : [1, 1, 2, 2, 3], 'class' : [0, 1, 1, 0, 1]} )
-# print(get_inf_gain('x1', data))
-# print(get_inf_gain('x2', data))
-# pprint.pprint(build_ID3(data, "class"))
 
 tree = build_ID3(data, "class")
-# print(tree['x1']['B']['x2'][3])
-pprint.pprint(tree)
+
+# obj = pd.DataFrame({'x1' : ['B'], 'x2' : [3]})
+# print(data) 
+obj = data.iloc[0].drop(labels='class') #z danych tzreba się pozbyć klas <- wyrzucam klucz 'class' z series 
+print(f"class for data in row 0 is : " + classify(tree, obj))
+obj = data.iloc[5255].drop(labels='class')
+print(f"class for data in row 5255 is : " + classify(tree, obj))
+
+# pprint.pprint(tree)
