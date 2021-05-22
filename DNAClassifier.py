@@ -103,16 +103,18 @@ def classify(ID3Tree, row, lastKey=None, checkKey=False):
                 checkKey = False
                 return classify(value, row, lastKey, checkKey)
 
-data = readSpliceFile("Data/spliceDTrainKIS.txt", 15)      
-# data = pd.DataFrame({'x1' : ['A', 'B', 'B', 'B', 'B'], 'x2' : [1, 1, 2, 2, 3], 'class' : [0, 1, 1, 0, 1]} )
 
-tree = build_ID3(data, "class")
+if __name__ == "__main__":
+    data = readSpliceFile("Data/spliceDTrainKIS.txt", 15)      
+    # data = pd.DataFrame({'x1' : ['A', 'B', 'B', 'B', 'B'], 'x2' : [1, 1, 2, 2, 3], 'class' : [0, 1, 1, 0, 1]} )
 
-# obj = pd.DataFrame({'x1' : ['B'], 'x2' : [3]})
-# print(data) 
-obj = data.iloc[0].drop(labels='class') #z danych tzreba się pozbyć klas <- wyrzucam klucz 'class' z series 
-print(f"class for data in row 0 is : " + classify(tree, obj))
-obj = data.iloc[5255].drop(labels='class')
-print(f"class for data in row 5255 is : " + classify(tree, obj))
+    tree = build_ID3(data, "class")
 
-# pprint.pprint(tree)
+    # obj = pd.DataFrame({'x1' : ['B'], 'x2' : [3]})
+    # print(data) 
+    obj = data.iloc[0].drop(labels='class') #z danych tzreba się pozbyć klas <- wyrzucam klucz 'class' z series 
+    print(f"class for data in row 0 is : " + classify(tree, obj))
+    obj = data.iloc[5255].drop(labels='class')
+    print(f"class for data in row 5255 is : " + classify(tree, obj))
+
+    # pprint.pprint(tree)
