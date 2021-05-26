@@ -52,17 +52,21 @@ def get_inf_gain(divideAttribute, collection):
     return get_entropy('class', collection) - information
 
 def choose_best_attribute(collection, classLabel):
-    maxInfGain = 0.0
-    bestAttribute = None
+    attributes = []
+    gains = []
     for attribute in collection.keys():
         if attribute != classLabel:
+            attributes.append(attribute)
             infGain = get_inf_gain(attribute, collection)
-            if infGain > maxInfGain:
-                bestAttribute = attribute
-                maxInfGain = infGain
-            elif infGain == maxInfGain:
-                bestAttribute = attribute
-                maxInfGain = infGain
+            gains.append(infGain)
+    
+    maxInfGain = gains[0]
+    bestAttribute = attributes[0]
+
+    for i in range(1, len(attributes)):
+        if gains[i] > maxInfGain:
+            maxInfGain = gains[i]
+            bestAttribute = attributes[i]
 
     return bestAttribute
         
@@ -116,19 +120,3 @@ def testID3(tree, test_data: DataFrame, class_label: str) -> float:
             test_success += 1
     
     return test_success / test_rows
-
-
-if __name__ == "__main__":
-    data = readSpliceFile("Data/spliceDTrainKIS.txt", 15)      
-    # data = DataFrame({'x1' : ['A', 'B', 'B', 'B', 'B'], 'x2' : [1, 1, 2, 2, 3], 'class' : [0, 1, 1, 0, 1]} )
-
-    tree = build_ID3(data, "class")
-
-    # obj = DataFrame({'x1' : ['B'], 'x2' : [3]})
-    # print(data) 
-    obj = data.iloc[0].drop(labels='class') #z danych tzreba się pozbyć klas <- wyrzucam klucz 'class' z series 
-    print(f"class for data in row 0 is : " + classify(tree, obj))
-    obj = data.iloc[5255].drop(labels='class')
-    print(f"class for data in row 5255 is : " + classify(tree, obj))
-
-    # pprint.pprint(tree)

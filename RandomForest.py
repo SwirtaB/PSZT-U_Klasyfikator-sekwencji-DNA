@@ -1,23 +1,29 @@
 import DNAClassifier
 from pandas.core.frame import DataFrame
 from DataSplit import *
+from math import sqrt
 
 
 class RandomForest(object):
 
-    def __init__(self, size: int, data: DataFrame, class_label: str, test_ratio: float):
+    def __init__(self, size: int, data: DataFrame, class_label: str, split_ratio: float, attribute_choice_fn, test: bool = False):
+
+        n = attribute_choice_fn(len([x for x in data.columns]) - 1)
 
         self.trees = []
         self.stats = []
         self.class_label = class_label
         for i in range(size):
-            (train_data, test_data) = splitDataRandom(data, test_ratio)
+            (train_data, test_data) = splitDataRandom(data, split_ratio, not test)
+            train_data = chooseNAttributes(train_data, n, class_label)
             tree = DNAClassifier.build_ID3(train_data, class_label)
-            stat = DNAClassifier.testID3(tree, test_data, class_label)
             self.trees.append(tree)
-            self.stats.append(stat)
+            if test:
+                stat = DNAClassifier.testID3(tree, test_data, class_label)
+                self.stats.append(stat)
 
 
+    # Klasyfikuje podany zestaw atrybutów
     def classify(self, row):
 
         results = {}
@@ -38,7 +44,9 @@ class RandomForest(object):
         
         return max_result
 
-    
+
+    # Testuje las losowy za pomocą podanych danych
+    # Zwraca celność lasu na podanych danych
     def test(self, test_data: DataFrame) -> float:
 
         test_rows = test_data.shape[0]
@@ -51,10 +59,3 @@ class RandomForest(object):
                 test_success += 1
         
         return test_success / test_rows
-
-
-if __name__ == "__main__":
-    (rf_data, test_rf_data) = splitDataRandom(DNAClassifier.readSpliceFile("Data/spliceDTrainKIS.txt", 15), 0.25)
-    rf = RandomForest(9, rf_data, "class", 0.33)
-    print(rf.stats)
-    print(rf.test(test_rf_data))
