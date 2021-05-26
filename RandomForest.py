@@ -1,6 +1,6 @@
 import DNAClassifier
 from pandas.core.frame import DataFrame
-from CrossValidation import splitData, testID3
+from DataSplit import *
 
 
 class RandomForest(object):
@@ -11,9 +11,9 @@ class RandomForest(object):
         self.stats = []
         self.class_label = class_label
         for i in range(size):
-            (train_data, test_data) = splitData(data, test_ratio)
+            (train_data, test_data) = splitDataRandom(data, test_ratio)
             tree = DNAClassifier.build_ID3(train_data, class_label)
-            stat = testID3(tree, test_data, class_label)
+            stat = DNAClassifier.testID3(tree, test_data, class_label)
             self.trees.append(tree)
             self.stats.append(stat)
 
@@ -54,7 +54,7 @@ class RandomForest(object):
 
 
 if __name__ == "__main__":
-    (rf_data, test_rf_data) = splitData(DNAClassifier.readSpliceFile("Data/spliceDTrainKIS.txt", 15), 0.25)
+    (rf_data, test_rf_data) = splitDataRandom(DNAClassifier.readSpliceFile("Data/spliceDTrainKIS.txt", 15), 0.25)
     rf = RandomForest(9, rf_data, "class", 0.33)
     print(rf.stats)
     print(rf.test(test_rf_data))

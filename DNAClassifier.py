@@ -1,8 +1,6 @@
-import pandas as pd
-import numpy as np
 from pandas.core.frame import DataFrame
 from pandas.core.series import Series
-import sklearn
+import numpy as np
 import sys
 import pprint
 
@@ -20,7 +18,7 @@ def readSpliceFile(filePath, atrNumber):
         i += 1
     labels.append('class')
 
-    data = pd.DataFrame(columns=labels)
+    data = DataFrame(columns=labels)
     file.readline()
     lines = file.read().splitlines()
 
@@ -69,7 +67,7 @@ def choose_best_attribute(collection, classLabel):
     return bestAttribute
         
 
-def build_ID3(collection : pd.DataFrame, classLabel, ID3Tree = None):
+def build_ID3(collection : DataFrame, classLabel, ID3Tree = None):
     if ID3Tree is None:
         ID3Tree = {}
 
@@ -104,13 +102,29 @@ def classify(ID3Tree, row, lastKey=None, checkKey=False):
                 return classify(value, row, lastKey, checkKey)
 
 
+# Testuje drzewo ID3 za pomoca danych testowych
+# Zwraca celnosc drzewa dla podanych danych
+def testID3(tree, test_data: DataFrame, class_label: str) -> float:
+
+    test_rows = test_data.shape[0]
+    test_success = 0
+    for i in range(test_rows):
+        obj = test_data.iloc[i].drop(class_label)
+        c = test_data.iloc[i].at[class_label]
+        result = classify(tree, obj)
+        if result == c:
+            test_success += 1
+    
+    return test_success / test_rows
+
+
 if __name__ == "__main__":
     data = readSpliceFile("Data/spliceDTrainKIS.txt", 15)      
-    # data = pd.DataFrame({'x1' : ['A', 'B', 'B', 'B', 'B'], 'x2' : [1, 1, 2, 2, 3], 'class' : [0, 1, 1, 0, 1]} )
+    # data = DataFrame({'x1' : ['A', 'B', 'B', 'B', 'B'], 'x2' : [1, 1, 2, 2, 3], 'class' : [0, 1, 1, 0, 1]} )
 
     tree = build_ID3(data, "class")
 
-    # obj = pd.DataFrame({'x1' : ['B'], 'x2' : [3]})
+    # obj = DataFrame({'x1' : ['B'], 'x2' : [3]})
     # print(data) 
     obj = data.iloc[0].drop(labels='class') #z danych tzreba się pozbyć klas <- wyrzucam klucz 'class' z series 
     print(f"class for data in row 0 is : " + classify(tree, obj))
