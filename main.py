@@ -32,7 +32,7 @@ attr_fns = [
 
 def test(cvs: List[CrossValidator], file_prefix: str, ratio: float, trees: int, attr_fn):
 
-    name = "%s ratio=%d, trees=%d, attr_fn=%s.txt"%(file_prefix, ratio, trees, attr_fn[0])
+    name = "%s ratio=%f, trees=%d, attr_fn=%s.txt"%(file_prefix, ratio, trees, attr_fn[0])
     print("Started test: %s"%(name))
 
     sum = 0.0
@@ -45,7 +45,7 @@ def test(cvs: List[CrossValidator], file_prefix: str, ratio: float, trees: int, 
     score = sum / cvsn
 
     file = open("Test/%s"%(name), "w")
-    file.write("%s ratio: %s trees: %s attr_fn: %s score: %s"%(file_prefix, ratio, trees, attr_fn[0], score))
+    file.write("%s ratio: %f trees: %d attr_fn: %s score: %f"%(file_prefix, ratio, trees, attr_fn[0], score))
     file.close()
 
     print("Finished test: %s"%(name))
