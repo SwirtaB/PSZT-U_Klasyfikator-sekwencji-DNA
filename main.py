@@ -18,8 +18,8 @@ def div_3(x):
 def sqrt(x):
     return int(msqrt(x))
 
-cvsn = 1
-cvspacks = 5
+cvsn = 3
+cvpacks = 5
 ratios = [0.5, 0.6, 0.7, 0.8, 0.9]
 treesn = [50, 100, 200, 400, 800]
 attr_fns = [
@@ -41,7 +41,7 @@ def test(cvs: List[CrossValidator], file_prefix: str, ratio: float, trees: int, 
         sumt = 0.0
         for test in tests:
             sumt += test
-        sum += sumt / cvspacks
+        sum += sumt / cvpacks
     score = sum / cvsn
 
     file = open("Test/%s"%(name), "w")
@@ -57,7 +57,7 @@ def tests(data: DataFrame, file_prefix: str):
 
     cvs: List[CrossValidator] = []
     for i in range(cvsn):
-        cvs.append(CrossValidator(data, cvspacks, True))
+        cvs.append(CrossValidator(data, cvpacks, True))
 
     # base test
     p = Process(target=test, args=(cvs, file_prefix, ratios[2], treesn[2], attr_fns[3]))
