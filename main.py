@@ -18,7 +18,7 @@ def div_3(x):
 def sqrt(x):
     return int(msqrt(x))
 
-cvsn = 3
+cvsn = 1
 cvpacks = 5
 ratios = [0.5, 0.6, 0.7, 0.8, 0.9]
 treesn = [50, 100, 200, 400, 800]
