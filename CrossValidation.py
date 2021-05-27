@@ -6,8 +6,10 @@ import DNAClassifier
 from RandomForest import RandomForest
 from math import sqrt
 
-
-# Zestaw danych do walidacji krzyżowej
+# Walidator krzyżowy.
+# Zawiera zestaw danych do trenowania z walidacją krzyżową.
+# Potrafi za pomocą zawieranych paczek danych stworzyć lasy losowe o podanych parametrach
+# i przetestować je za pomocą odpowiadających im danych testowych.
 class CrossValidator(object):
 
     def __init__(self, data: DataFrame, k: int, random: bool = False):
@@ -25,18 +27,7 @@ class CrossValidator(object):
             self.packs.append((train_pack, test_pack))
     
 
-    # def makeTrees(self, class_label: str) -> Tuple[List[Dict], List[float]]:
-
-    #     trees = []
-    #     tests = []
-    #     for (train_pack, test_pack) in self.packs:
-    #         tree = DNAClassifier.build_ID3(train_pack, class_label)
-    #         trees.append(tree)
-    #         tests.append(DNAClassifier.testID3(tree, test_pack, class_label))
-
-    #     return (trees, tests)
-    
-    # Tworzy i testuje lasy losowe za pomocą swoich danych
+    # Tworzy i testuje lasy losowe za pomocą swoich danych.
     def makeForests(self, size: int, class_label: str, split_ratio: float, attribute_choice_fn) -> Tuple[List[RandomForest], List[float]]:
         
         forests = []

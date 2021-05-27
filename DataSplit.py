@@ -4,7 +4,7 @@ from random import randint
 
 
 # Dzieli dane na treningowe (0) i testowe (1).
-# test_ratio wyznacza ile otrzymanych danych zostanie użyte do testowania
+# split_ratio wyznacza ile % danych zostanie umieszczone w danych treningowych (0).
 def splitDataRandom(data: DataFrame, split_ratio: float, drop_second: bool = False) -> Tuple[DataFrame, DataFrame]:
 
     rows = data.shape[0]
@@ -24,7 +24,8 @@ def splitDataRandom(data: DataFrame, split_ratio: float, drop_second: bool = Fal
     return (data1, data2)
 
 
-# Dzieli dane na k równych paczek po kolei
+# Dzieli dane na k równych paczek.
+# Nie zmienia kolejności danych, są one dzielone w takiej kolejności w jakiej występują w podanych danych.
 def splitDataToPacksSequencial(data: DataFrame, packs: int) -> List[DataFrame]:
 
     pcks = []
@@ -36,7 +37,8 @@ def splitDataToPacksSequencial(data: DataFrame, packs: int) -> List[DataFrame]:
     return pcks
 
 
-# Dzieli dane na k równych paczek losowo
+# Dzieli dane na k równych paczek.
+# Zmienia losowo kolejność danych, ich kolejność w podanych danych nie ma znaczenia.
 def splitDataToPacksRandom(data: DataFrame, packs: int) -> List[DataFrame]:
 
     pcks = []
@@ -49,6 +51,8 @@ def splitDataToPacksRandom(data: DataFrame, packs: int) -> List[DataFrame]:
     return pcks
 
 
+# Wybiera losowo n atrybutów w podanych danych i odrzuca resztę.
+# Zwrace podane dane bez kolumn z atrybutami, które nie zostały wybrane.
 def chooseNAttributes(data: DataFrame, n: int, class_label: str) -> DataFrame:
 
     attributes = [x for x in data.columns]

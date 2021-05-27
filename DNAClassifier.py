@@ -4,7 +4,9 @@ import numpy as np
 import sys
 import pprint
 
-def readSpliceFile(filePath, atrNumber):
+
+# Wczytuje plik z danymi i zwraca obiekt z nimi.
+def readSpliceFile(filePath, atrNumber) -> DataFrame:
     try:
         file = open(filePath, 'r')
     except IOError:
@@ -32,6 +34,7 @@ def readSpliceFile(filePath, atrNumber):
     file.close()
     return data
 
+
 def get_entropy(divideAttribute, collection):
     uniqueValueCounter = collection[divideAttribute].value_counts()
     entropy = 0
@@ -40,6 +43,7 @@ def get_entropy(divideAttribute, collection):
         entropy += -frequency*np.log(frequency)
     
     return entropy
+
 
 def get_inf_gain(divideAttribute, collection):
     uniqueAttributes = collection[divideAttribute].unique()
@@ -50,6 +54,7 @@ def get_inf_gain(divideAttribute, collection):
         information += len(group)/len(collection) * get_entropy('class', group)
     
     return get_entropy('class', collection) - information
+    
 
 def choose_best_attribute(collection, classLabel):
     attributes = []
@@ -71,6 +76,7 @@ def choose_best_attribute(collection, classLabel):
     return bestAttribute
         
 
+# Buduje i zwraca drzewo ID3 wytrenowane na podanych danych.
 def build_ID3(collection : DataFrame, classLabel, ID3Tree = None):
     if ID3Tree is None:
         ID3Tree = {}
@@ -92,6 +98,8 @@ def build_ID3(collection : DataFrame, classLabel, ID3Tree = None):
 
     return ID3Tree
 
+
+# Klasyfikuje za pomocą podanego drzewa ID3 podany zestaw atrybutów.
 def classify(ID3Tree, row, lastKey=None, checkKey=False):
     if type(ID3Tree) is not dict:
         return ID3Tree

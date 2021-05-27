@@ -3,8 +3,7 @@ from CrossValidation import CrossValidator
 from DNAClassifier import readSpliceFile
 from pandas import DataFrame
 from math import sqrt as msqrt
-from multiprocessing import Process, Pool
-from time import sleep
+from multiprocessing import Process
 
 def identity(x):
     return x
@@ -18,10 +17,15 @@ def div_3(x):
 def sqrt(x):
     return int(msqrt(x))
 
+# Ilość walidatorów krzyżowych użytych do testowania.
 cvsn = 1
+# Ilość paczek na które walidator krzyżowy dzieli dane.
 cvpacks = 5
+# Przypadki ilości drzew w lesie.
+treesn = [1, 3, 6, 12, 25, 50, 100, 200, 400, 800]
+# Przypadki ilości danych przeznaczonych na trenowanie jednego drzewa.
 ratios = [0.5, 0.6, 0.7, 0.8, 0.9]
-treesn = [50, 100, 200, 400, 800]
+# Przypadki funkcji zależności ilości atrybutów w jednym drzewie od wszystkich atrybutów.
 attr_fns = [
     ("n", identity),
     ("nDIV2", div_2),
@@ -30,6 +34,7 @@ attr_fns = [
 ]
 
 
+# Przeprowadzenie jednego testu na podanym walidatorze krzyżowym, z podanymi parametrami.
 def test(cvs: List[CrossValidator], file_prefix: str, ratio: float, trees: int, attr_fn):
 
     name = "%s ratio=%f, trees=%d, attr_fn=%s.txt"%(file_prefix, ratio, trees, attr_fn[0])
@@ -51,42 +56,45 @@ def test(cvs: List[CrossValidator], file_prefix: str, ratio: float, trees: int, 
     print("Finished test: %s"%(name))
 
 
+# Przeprowadzenie testów.
 def tests(data: DataFrame, file_prefix: str):
 
     processes: List[Process] = []
 
     cvs: List[CrossValidator] = []
-    for i in range(cvsn):
+    for _ in range(cvsn):
         cvs.append(CrossValidator(data, cvpacks, True))
 
-    # base test
-    p = Process(target=test, args=(cvs, file_prefix, ratios[2], treesn[2], attr_fns[3]))
+    # Przypadek bazowy.
+    p = Process(target=test, args=(cvs, file_prefix, ratios[2], treesn[7], attr_fns[3]))
     processes.append(p)
 
-    # trees tests
+    # Testy dla zmiennej ilości drzew.
     for trees in treesn:
         if trees == 200:
             continue
         p = Process(target=test, args=(cvs, file_prefix, ratios[2], trees, attr_fns[3]))
         processes.append(p)
 
-    # attr tests
+    # Testy dla różnych funkcji ilości atrybutów w drzewie.
     for attr_fn in attr_fns:
         if attr_fn[0] == "sqrt(n)":
             continue
-        p = Process(target=test, args=(cvs, file_prefix, ratios[2], treesn[2], attr_fn))
+        p = Process(target=test, args=(cvs, file_prefix, ratios[2], treesn[7], attr_fn))
         processes.append(p)
 
-    # train set tests
+    # Testy dla różnych ilości danych przeznaczanych na trenowanie jednego drzewa.
     for ratio in ratios:
         if ratio == 0.7:
             continue
-        p = Process(target=test, args=(cvs, file_prefix, ratio, treesn[2], attr_fns[3]))
+        p = Process(target=test, args=(cvs, file_prefix, ratio, treesn[7], attr_fns[3]))
         processes.append(p)
 
+    # Uruchomienie testów.
     for p in processes:
         p.start()
         
+    # Czekanie na zakończenie testów.
     for p in processes:
         p.join()
 

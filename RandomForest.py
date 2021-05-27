@@ -4,6 +4,9 @@ from DataSplit import *
 from math import sqrt
 
 
+# Las losowy.
+# Bierze zestaw danych i buduje n drzew ID3.
+# Przeprowadza klasyfikację przez wybranie odpowiedzi, którą zwróciło najwięcej drzew.
 class RandomForest(object):
 
     def __init__(self, size: int, data: DataFrame, class_label: str, split_ratio: float, attribute_choice_fn, test: bool = False):
