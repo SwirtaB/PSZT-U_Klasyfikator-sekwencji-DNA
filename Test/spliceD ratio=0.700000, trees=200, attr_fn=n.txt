@@ -1,0 +1,1 @@
+spliceD ratio: 0.700000 trees: 200 attr_fn: n score: 0.931128

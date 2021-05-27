@@ -24,8 +24,8 @@ ratios = [0.5, 0.6, 0.7, 0.8, 0.9]
 treesn = [50, 100, 200, 400, 800]
 attr_fns = [
     ("n", identity),
-    ("n/2", div_2),
-    ("n/3", div_3),
+    ("nDIV2", div_2),
+    ("nDIV3", div_3),
     ("sqrt(n)", sqrt),
 ]
 
@@ -65,16 +65,22 @@ def tests(data: DataFrame, file_prefix: str):
 
     # trees tests
     for trees in treesn:
+        if trees == 200:
+            continue
         p = Process(target=test, args=(cvs, file_prefix, ratios[2], trees, attr_fns[3]))
         processes.append(p)
 
     # attr tests
     for attr_fn in attr_fns:
+        if attr_fn[0] == "sqrt(n)":
+            continue
         p = Process(target=test, args=(cvs, file_prefix, ratios[2], treesn[2], attr_fn))
         processes.append(p)
 
     # train set tests
     for ratio in ratios:
+        if ratio == 0.7:
+            continue
         p = Process(target=test, args=(cvs, file_prefix, ratio, treesn[2], attr_fns[3]))
         processes.append(p)
 
