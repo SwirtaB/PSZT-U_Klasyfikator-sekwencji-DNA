@@ -1,1 +1,0 @@
-spliceA ratio: 0.600000 trees: 200 attr_fn: sqrt(n) score: 0.806668

@@ -56,8 +56,10 @@ def test(cvs: List[CrossValidator], file_prefix: str, ratio: float, trees: int, 
     print("Finished test: %s"%(name))
 
 
-# Przeprowadzenie testów.
-def tests(data: DataFrame, file_prefix: str):
+# Przeprowadzenie testów dla spliceD.
+def testSpliceD(data: DataFrame):
+
+    file_prefix = "spliceD"
 
     processes: List[Process] = []
 
@@ -71,23 +73,56 @@ def tests(data: DataFrame, file_prefix: str):
 
     # Testy dla zmiennej ilości drzew.
     for trees in treesn:
-        if trees == 200:
-            continue
         p = Process(target=test, args=(cvs, file_prefix, ratios[2], trees, attr_fns[3]))
         processes.append(p)
 
     # Testy dla różnych funkcji ilości atrybutów w drzewie.
     for attr_fn in attr_fns:
-        if attr_fn[0] == "sqrt(n)":
-            continue
-        p = Process(target=test, args=(cvs, file_prefix, ratios[2], treesn[7], attr_fn))
+        p = Process(target=test, args=(cvs, file_prefix, ratios[2], treesn[1], attr_fn))
         processes.append(p)
 
     # Testy dla różnych ilości danych przeznaczanych na trenowanie jednego drzewa.
     for ratio in ratios:
-        if ratio == 0.7:
-            continue
-        p = Process(target=test, args=(cvs, file_prefix, ratio, treesn[7], attr_fns[3]))
+        p = Process(target=test, args=(cvs, file_prefix, ratio, treesn[1], attr_fns[0]))
+        processes.append(p)
+
+    # Uruchomienie testów.
+    for p in processes:
+        p.start()
+        
+    # Czekanie na zakończenie testów.
+    for p in processes:
+        p.join()
+
+
+# Przeprowadzenie testów dla spliceA.
+def testSpliceA(data: DataFrame):
+
+    file_prefix = "spliceA"
+
+    processes: List[Process] = []
+
+    cvs: List[CrossValidator] = []
+    for _ in range(cvsn):
+        cvs.append(CrossValidator(data, cvpacks, True))
+
+    # Przypadek bazowy.
+    p = Process(target=test, args=(cvs, file_prefix, ratios[2], treesn[7], attr_fns[3]))
+    processes.append(p)
+
+    # Testy dla zmiennej ilości drzew.
+    for trees in treesn:
+        p = Process(target=test, args=(cvs, file_prefix, ratios[2], trees, attr_fns[3]))
+        processes.append(p)
+
+    # Testy dla różnych funkcji ilości atrybutów w drzewie.
+    for attr_fn in attr_fns:
+        p = Process(target=test, args=(cvs, file_prefix, ratios[2], treesn[3], attr_fn))
+        processes.append(p)
+
+    # Testy dla różnych ilości danych przeznaczanych na trenowanie jednego drzewa.
+    for ratio in ratios:
+        p = Process(target=test, args=(cvs, file_prefix, ratio, treesn[3], attr_fns[0]))
         processes.append(p)
 
     # Uruchomienie testów.
@@ -102,9 +137,10 @@ def tests(data: DataFrame, file_prefix: str):
 def main():
 
     spliceDdata = readSpliceFile("Data/spliceDTrainKIS.txt", 15)
-    tests(spliceDdata, "spliceD")
+    testSpliceD(spliceDdata)
     spliceAdata = readSpliceFile("Data/spliceATrainKIS.txt", 90)
-    tests(spliceAdata, "spliceA")
+    testSpliceA(spliceAdata)
+
 
 
 if __name__ == "__main__":

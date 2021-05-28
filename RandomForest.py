@@ -1,7 +1,6 @@
 import DNAClassifier
 from pandas.core.frame import DataFrame
 from DataSplit import *
-from math import sqrt
 
 
 # Las losowy.

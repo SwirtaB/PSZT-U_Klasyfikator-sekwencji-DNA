@@ -1,8 +1,6 @@
 from pandas.core.frame import DataFrame
 from pandas.core.series import Series
 import numpy as np
-import sys
-import pprint
 
 
 # Wczytuje plik z danymi i zwraca obiekt z nimi.

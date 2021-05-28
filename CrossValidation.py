@@ -2,7 +2,6 @@ from typing import Tuple, List, Dict
 from pandas.core.frame import DataFrame
 from random import randint
 from DataSplit import *
-import DNAClassifier
 from RandomForest import RandomForest
 from math import sqrt
 
